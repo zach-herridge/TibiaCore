@@ -15,7 +15,7 @@ public class SpriteDumper {
 
 
     public SpriteDumper() throws IOException {
-        File sprite = new File("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprites-00e7872bab29f616531b72b8b7de179e90a8d14da7798c13ac58b2844b95d254.bmp.lzma");
+        File sprite = new File("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprites-00f0659e1bf675d5b0a4d0400923defc390b80885d635f90733d1b0ee73e8b57.bmp.lzma");
 
         Decoder decoder = new Decoder();
 
