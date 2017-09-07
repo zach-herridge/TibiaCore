@@ -39,7 +39,7 @@ public class SpriteDumper {
         byte[] bytes = buffer.getBytes();
 
         BufferedImage read = ImageIO.read(new ByteInputStream(bytes, bytes.length));
-        ImageIO.write(read, "png", new File("test.png"));
+        ImageIO.write(read, "png", new File("image.png"));
     }
 
     public static void main(String[] args) {

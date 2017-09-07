@@ -14,8 +14,8 @@ public class SpriteDetector {
     public SpriteDetector() {
         int matchMethod = Imgproc.TM_CCOEFF;
 
-        Mat image = Imgcodecs.imread("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprite_detection\\test.png");
-        Mat template = Imgcodecs.imread("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprite_detection\\detect.png");
+        Mat image = Imgcodecs.imread("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprite_detection\\image.png");
+        Mat template = Imgcodecs.imread("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprite_detection\\template.png");
 
         int result_cols = image.cols() - template.cols() + 1;
         int result_rows = image.rows() - template.rows() + 1;
