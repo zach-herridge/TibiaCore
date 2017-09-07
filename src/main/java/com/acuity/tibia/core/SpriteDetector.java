@@ -5,6 +5,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+import java.io.File;
+
 /**
  * Created by Zachary Herridge on 9/7/2017.
  */
@@ -14,8 +16,8 @@ public class SpriteDetector {
     public SpriteDetector() {
         int matchMethod = Imgproc.TM_CCOEFF;
 
-        Mat image = Imgcodecs.imread("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprite_detection\\image.png");
-        Mat template = Imgcodecs.imread("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprite_detection\\template.png");
+        Mat image = Imgcodecs.imread(new File(getClass().getClassLoader().getResource("sprite_detection/image.png").getPath()).getAbsolutePath());
+        Mat template = Imgcodecs.imread(new File(getClass().getClassLoader().getResource("sprite_detection/template.png").getPath()).getAbsolutePath());
 
         int result_cols = image.cols() - template.cols() + 1;
         int result_rows = image.rows() - template.rows() + 1;

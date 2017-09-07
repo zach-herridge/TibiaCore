@@ -15,7 +15,7 @@ public class SpriteDumper {
 
 
     public SpriteDumper() throws IOException {
-        File sprite = new File("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprites-00f0659e1bf675d5b0a4d0400923defc390b80885d635f90733d1b0ee73e8b57.bmp.lzma");
+        File sprite = new File(getClass().getClassLoader().getResource("asset_tests/sprites-0ab38261005826ea657653b905f7e3185bf1790d414080e8f537b86242cbb6ac.bmp.lzma").getPath());
 
         Decoder decoder = new Decoder();
 
@@ -23,7 +23,7 @@ public class SpriteDumper {
         fileInputStream.skip(6);
 
         while ((fileInputStream.read() & 0x80) == 0x80) {
-            System.out.println("Skipping");
+            System.out.println("Skipping header byte.");
         }
 
         byte[] properties = new byte[5];
@@ -45,8 +45,6 @@ public class SpriteDumper {
     public static void main(String[] args) {
         try {
             new SpriteDumper();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
