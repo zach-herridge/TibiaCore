@@ -19,6 +19,9 @@ public class SpriteDetector {
         Mat image = Imgcodecs.imread(new File(getClass().getClassLoader().getResource("sprite_detection/image.png").getPath()).getAbsolutePath());
         Mat template = Imgcodecs.imread(new File(getClass().getClassLoader().getResource("sprite_detection/template.png").getPath()).getAbsolutePath());
 
+        Mat resizedImage = new Mat();
+        Imgproc.resize(image, resizedImage, new Size(300, 300));
+
         int result_cols = image.cols() - template.cols() + 1;
         int result_rows = image.rows() - template.rows() + 1;
         Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
