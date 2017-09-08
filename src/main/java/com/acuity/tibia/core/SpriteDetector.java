@@ -18,10 +18,10 @@ public class SpriteDetector {
     public SpriteDetector() {
         int matchMethod = Imgproc.TM_CCORR_NORMED;
 
-        Mat image = Imgcodecs.imread("C:\\Users\\Zach\\Dropbox\\Code\\Code Projects\\AcuityBotting\\TibiaCore\\src\\main\\resources\\sprite_detection\\windowOnly.png");
+        Mat image = Imgcodecs.imread("C:\\Users\\Zach\\Dropbox\\Code\\Code Projects\\AcuityBotting\\TibiaCore\\src\\main\\resources\\sprite_detection\\windowOnly.png", Imgcodecs.IMREAD_GRAYSCALE);
         showImage(image);
-        Mat template = Imgcodecs.imread("C:\\Users\\Zach\\Dropbox\\Code\\Code Projects\\AcuityBotting\\TibiaCore\\src\\main\\resources\\sprite_detection\\ScaledTemplate.png");
-        Mat mask = Imgcodecs.imread("C:\\Users\\Zach\\Dropbox\\Code\\Code Projects\\AcuityBotting\\TibiaCore\\src\\main\\resources\\sprite_detection\\mask2.png");
+        Mat template = Imgcodecs.imread("C:\\Users\\Zach\\Dropbox\\Code\\Code Projects\\AcuityBotting\\TibiaCore\\src\\main\\resources\\sprite_detection\\ScaledTemplate.png", Imgcodecs.IMREAD_GRAYSCALE);
+        Mat mask = Imgcodecs.imread("C:\\Users\\Zach\\Dropbox\\Code\\Code Projects\\AcuityBotting\\TibiaCore\\src\\main\\resources\\sprite_detection\\mask2.png", Imgcodecs.IMREAD_GRAYSCALE);
         showImage(template);
 
         System.out.println(System.currentTimeMillis());
