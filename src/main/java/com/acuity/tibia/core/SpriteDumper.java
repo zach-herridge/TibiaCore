@@ -1,6 +1,8 @@
 package com.acuity.tibia.core;
 
 import SevenZip.Compression.LZMA.Decoder;
+import SevenZip.Compression.LZMA.Encoder;
+import SevenZip.ICodeProgress;
 import com.google.gson.Gson;
 import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
@@ -9,7 +11,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Zach on 9/6/2017.
@@ -20,22 +24,28 @@ public class SpriteDumper {
 
     private void dumpSpriteSheet(String assetPath, CatalogEntry entry) throws Exception{
         if (!entry.getType().equals("sprite")) return;
-        if (set.contains(entry.getSpritetype() + "-" + entry.getArea())) return;
-        set.add(entry.getSpritetype() + "-" + entry.getArea());
 
+        if (set.contains(entry.getSpriteType() + "-" + entry.getArea())) return;
+        set.add(entry.getSpriteType() + "-" + entry.getArea());
 
-
-        Decoder decoder = new Decoder();
         FileInputStream fileInputStream = new FileInputStream(assetPath + entry.getFile() + ".lzma");
-        fileInputStream.skip(6);
+        byte[] header = new byte[6];
+        fileInputStream.read(header);
 
-        while ((fileInputStream.read() & 0x80) == 0x80) {
-            System.out.println("Skipping header byte.");
+        ByteOutputStream extra = new ByteOutputStream();
+        while (true) {
+            int read = fileInputStream.read();
+            extra.write(read);
+            if ((read & 0x80) != 0x80){
+                break;
+            }
         }
 
         byte[] properties = new byte[5];
         fileInputStream.read(properties);
-        decoder.SetDecoderProperties(properties);
+
+        Decoder decoder = new Decoder();
+        Encoder encoder = decoder.SetDecoderPropertiesWithEncoder(properties);
 
         fileInputStream.skip(8);
 
@@ -47,20 +57,39 @@ public class SpriteDumper {
 
         BufferedImage sheet = ImageIO.read(new ByteInputStream(bytes, bytes.length));
 
+        for (int i = 0; i < 384; i++) {
+            for (int j = 0; j < 384; j++) {
+                int rgb = sheet.getRGB(i, j);
+                if (rgb != 16711935) sheet.setRGB(i, j, -4671305);
+            }
+        }
+
+        ByteOutputStream byteOutputStream = new ByteOutputStream();
+        ImageIO.write(sheet, "bmp", byteOutputStream);
+        byte[] bytes1 = byteOutputStream.getBytes();
+        ByteOutputStream byteOutputStream1 = new ByteOutputStream();
+        encoder.Code(new ByteInputStream(bytes, bytes.length), byteOutputStream1, -1, -1, new ICodeProgress() {
+            @Override
+            public void SetProgress(long inSize, long outSize) {
+
+            }
+        });
+        byte[] output = byteOutputStream1.getBytes();
+
+        byte[] concat = concat(concat(header, extra.getBytes()), output);
 
         //0 = 12x12
         //1 = 12x6
         //2 = 6x12
         //3 = 6x6
 
-        int xCols = (entry.getSpritetype() == 0 || entry.getSpritetype() == 1) ? 12 : 6;
-        int yCols = (entry.getSpritetype() == 0 || entry.getSpritetype() == 2) ? 12 : 6;
+        int xCols = (entry.getSpriteType() == 0 || entry.getSpriteType() == 1) ? 12 : 6;
+        int yCols = (entry.getSpriteType() == 0 || entry.getSpriteType() == 2) ? 12 : 6;
 
         int xSize = 384 / xCols;
         int ySize = 384 / yCols;
 
-
-        File sheetFolder = new File("dump/sprite_sheets/" + entry.getFirstspriteid() + "-" + entry.getLastspriteid());
+        File sheetFolder = new File("dump/sprite_sheets/" + entry.getFirstSpriteID() + "-" + entry.getLastSpriteID());
         if (!sheetFolder.exists()) sheetFolder.mkdir();
 
         for (int x = 0; x < xCols; x++) {
@@ -70,13 +99,23 @@ public class SpriteDumper {
             }
         }
 
+
+        new FileOutputStream(new File(sheetFolder, entry.getFile() + ".lzma")).write(concat);
+
         ImageIO.write(sheet, "png", new File(sheetFolder, "sheet.png"));
     }
 
+    public byte[] concat(byte[] a, byte[] b) {
+        int aLen = a.length;
+        int bLen = b.length;
+        byte[] c= new byte[aLen+bLen];
+        System.arraycopy(a, 0, c, 0, aLen);
+        System.arraycopy(b, 0, c, aLen, bLen);
+        return c;
+    }
 
     public SpriteDumper() throws IOException {
         String assetsPath = "C:\\Users\\Zach\\AppData\\Local\\Tibia\\packages\\Tibia\\assets\\";
-
 
         String json = new String(Files.readAllBytes(new File(assetsPath + "catalog-content.json").toPath()));
 
@@ -89,7 +128,6 @@ public class SpriteDumper {
             }
         }
     }
-
 
     private static class CatalogEntry {
 
@@ -108,15 +146,15 @@ public class SpriteDumper {
             return file;
         }
 
-        public int getSpritetype() {
+        public int getSpriteType() {
             return spritetype;
         }
 
-        public int getFirstspriteid() {
+        public int getFirstSpriteID() {
             return firstspriteid;
         }
 
-        public int getLastspriteid() {
+        public int getLastSpriteID() {
             return lastspriteid;
         }
 
