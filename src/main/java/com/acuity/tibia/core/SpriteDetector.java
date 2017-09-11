@@ -15,19 +15,22 @@ import java.io.File;
  */
 public class SpriteDetector {
 
+
     public SpriteDetector() {
         int matchMethod = Imgproc.TM_CCORR_NORMED;
 
-        Mat image = Imgcodecs.imread("C:\\Users\\Zach\\Dropbox\\Code\\Code Projects\\AcuityBotting\\TibiaCore\\src\\main\\resources\\sprite_detection\\windowOnly.png", Imgcodecs.IMREAD_GRAYSCALE);
-        showImage(image);
-        Mat template = Imgcodecs.imread("C:\\Users\\Zach\\Dropbox\\Code\\Code Projects\\AcuityBotting\\TibiaCore\\src\\main\\resources\\sprite_detection\\ScaledTemplate.png", Imgcodecs.IMREAD_GRAYSCALE);
-        Mat mask = Imgcodecs.imread("C:\\Users\\Zach\\Dropbox\\Code\\Code Projects\\AcuityBotting\\TibiaCore\\src\\main\\resources\\sprite_detection\\mask2.png", Imgcodecs.IMREAD_GRAYSCALE);
-        showImage(template);
-
         System.out.println(System.currentTimeMillis());
+
+        Mat image = Imgcodecs.imread("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprite_detection\\image.png", Imgcodecs.CV_LOAD_IMAGE_COLOR);
+        Mat template = Imgcodecs.imread("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprite_detection\\template.png", Imgcodecs.CV_LOAD_IMAGE_COLOR);
+        Mat mask = Imgcodecs.imread("C:\\Users\\S3108772\\IdeaProjects\\TibiaCore\\src\\main\\resources\\sprite_detection\\mask.png", Imgcodecs.CV_LOAD_IMAGE_COLOR);
+
+        Mat resizedImage = new Mat();
+        Imgproc.resize(image, resizedImage, new Size(300, 300));
+
         int result_cols = image.cols() - template.cols() + 1;
         int result_rows = image.rows() - template.rows() + 1;
-        Mat result = new Mat(result_rows, result_cols, CvType.CV_8UC4);
+        Mat result = new Mat(result_rows, result_cols, CvType.CV_32FC1);
 
         Imgproc.matchTemplate(image, template, result,  matchMethod, mask);
         Core.normalize(result, result, 0, 1, Core.NORM_MINMAX, -1, new Mat());
@@ -42,9 +45,6 @@ public class SpriteDetector {
         }
 
         Imgproc.rectangle(image, matchLoc, new Point(matchLoc.x + template.cols(), matchLoc.y + template.rows()), new Scalar(0, 255, 0));
-
-        System.out.println(System.currentTimeMillis());
-
         Imgcodecs.imwrite("output.png", image);
 
         System.out.println();
