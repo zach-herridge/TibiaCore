@@ -9,24 +9,19 @@ import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Zach on 9/6/2017.
  */
 public class SpriteDumper {
 
-    private static HashSet<String> set = new HashSet<>();
-
     private void dumpSpriteSheet(String assetPath, CatalogEntry entry) throws Exception{
         if (!entry.getType().equals("sprite")) return;
-
-        if (set.contains(entry.getSpriteType() + "-" + entry.getArea())) return;
-        set.add(entry.getSpriteType() + "-" + entry.getArea());
 
         FileInputStream fileInputStream = new FileInputStream(assetPath + entry.getFile() + ".lzma");
         byte[] header = new byte[6];
@@ -78,6 +73,7 @@ public class SpriteDumper {
 
         byte[] concat = concat(concat(header, extra.getBytes()), output);
 
+        //Sheet sizes.
         //0 = 12x12
         //1 = 12x6
         //2 = 6x12
@@ -114,9 +110,7 @@ public class SpriteDumper {
         return c;
     }
 
-    public SpriteDumper() throws IOException {
-        String assetsPath = "C:\\Users\\Zach\\AppData\\Local\\Tibia\\packages\\Tibia\\assets\\";
-
+    public SpriteDumper(String assetsPath) throws IOException {
         String json = new String(Files.readAllBytes(new File(assetsPath + "catalog-content.json").toPath()));
 
         CatalogEntry[] entries = new Gson().fromJson(json, CatalogEntry[].class);
@@ -165,7 +159,7 @@ public class SpriteDumper {
 
     public static void main(String[] args) {
         try {
-            new SpriteDumper();
+            new SpriteDumper("C:\\Users\\Zach\\AppData\\Local\\Tibia\\packages\\Tibia\\assets\\");
         } catch (IOException e) {
             e.printStackTrace();
         }
